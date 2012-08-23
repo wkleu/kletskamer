@@ -26,9 +26,16 @@ app.listen(port, function() {
 });
 
 io.sockets.on('connection', function (socket) {
+  socket.broadcast.emit('chat', socket.sessionId + ' connected');
+  
   socket.on('chat', function (msg) {
     console.log('chat received: ' + msg);
 	socket.emit('chat', msg);
 	socket.broadcast.emit('chat', msg);
   });
+  
+  socket.on('disconnect', function () {
+	socket.broadcast.emit('chat', socket.sessionId + ' disconnected');
+  });
+  
 });
