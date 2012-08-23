@@ -29,6 +29,6 @@ io.sockets.on('connection', function (socket) {
   socket.on('chat', function (msg) {
     console.log('chat received: ' + msg);
 	socket.emit('chat', msg);
-	socket.broadcast.emit('chat', + msg);
+	socket.broadcast.emit('chat', msg);
   });
 });
