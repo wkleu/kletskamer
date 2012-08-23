@@ -3,34 +3,55 @@
 	<head>
 		 <title>Kletskamer</title>
 		 <link href="/css/bootstrap.min.css" rel="stylesheet">
+		 <style type="text/css">
+			.center {
+				text-align:center;
+			}
+		 </style
 	</head>
 <body>
-	
-	<div class="container well">
-		<div class="row" id="mainChat">
-			Welcome to Kletskamer
+	<div class="container">
+		<h3>Kletskamer</h3>
+		<div class="well span6 row" id="nameSelector">
+			<div class="row offset1 span4 center"><strong>Name: </strong><input type="text" id="name" /></div>
+			<div class="row offset1 span4 center"><button class="btn btn-primary" onclick="connect()">Connect</button></div>	
 		</div>
-		<div class="row">
-			<input type="text" id="textInput"/>
-			<button class="btn" onclick="sendMessage()">Send</button>
+		<div class="well" id="chatView" style="display:none">
+			<div class="row offset1" >
+				<p id="mainChat">
+				</p>
+			</div>
+			<div class="row offset1">
+				<input type="text" id="textInput"/>
+			</div>
+			<div class="row offset1">
+				<button class="btn btn-primary" onclick="sendMessage()">Send</button>
+			</div>
 		</div>
 	</div>
 
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
 	<script>
-	  var socket = io.connect(document.URL);
+		var socket;
+		var name;
 	  
-	  socket.on('chat', function (msg) {
-		console.log(msg);
-		document.getElementById('mainChat').innerHTML += ('<br/>' + msg);
-	  });
+		function connect() {
+			socket = io.connect(document.URL);
+			socket.on('chat', function (msg) {
+				console.log(msg);
+				document.getElementById('mainChat').innerHTML += ('<br/>' + msg);
+			});
+			document.getElementById('nameSelector').style.display='none';
+			document.getElementById('chatView').style.display='';
+			name = document.getElementById('name').value; 
+		}
 	  
-	  function sendMessage() {
-		var msg = document.getElementById('textInput').value;
-		socket.emit('chat', msg);
-		document.getElementById('textInput').value = '';
-	  }
+		function sendMessage() {
+			var msg = '<strong>'+ name + ':</strong> ' + document.getElementById('textInput').value;
+			socket.emit('chat', msg);
+			document.getElementById('textInput').value = '';
+		}
 	</script>
 </body>
 
