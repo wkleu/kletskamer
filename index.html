@@ -19,7 +19,7 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
 	<script>
-	  var socket = io.connect('http://kletskamer.herokuapp.com');
+	  var socket = io.connect(document.URL);
 	  
 	  socket.on('chat', function (msg) {
 		console.log(msg);
