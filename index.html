@@ -2,54 +2,66 @@
 <html>
 	<head>
 		 <title>Kletskamer</title>
-		 <link href="/css/bootstrap.min.css" rel="stylesheet">
+		 <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.0/css/bootstrap-combined.min.css" rel="stylesheet">
 		 <style type="text/css">
 			.center {
 				text-align:center;
 			}
-		 </style
+		 </style>
 	</head>
 <body>
 	<div class="container">
 		<h3>Kletskamer</h3>
 		<div class="well span6 row" id="nameSelector">
 			<div class="row offset1 span4 center"><strong>Name: </strong><input type="text" id="name" /></div>
-			<div class="row offset1 span4 center"><button class="btn btn-primary" onclick="connect()">Connect</button></div>	
+			<div class="row offset1 span4 center"><button class="btn btn-primary" id="connectBtn">Connect</button></div>	
 		</div>
 		<div class="well" id="chatView" style="display:none">
 			<div class="row offset1" >
 				<p id="mainChat"></p>
 			</div>
 			<div class="row offset1 input-append">
-				<input type="text" id="textInput"><button class="btn btn-primary" onclick="sendMessage()">Send</button>
+				<input type="text" id="textInput"><button class="btn btn-primary" id="sendBtn">Send</button>
 			</div>
 		</div>
 	</div>
 
 	<script src="/socket.io/socket.io.js"></script>
-	<script src="/js/bootstrap.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.0/js/bootstrap.min.js"></script>
 	<script>
 		var socket;
 		var name;
 	  
+		$(document).ready(function() {
+			$('#name').focus();
+			$('#connectBtn').click(connect);
+			$('#sendBtn').click(sendMessage);
+			$('#textInput').bind('keypress', function(e) {
+				if (e.which == 13) {  // Enter key pressed
+					sendMessage();
+				}		
+			});
+			
+		});
+	  
 		function connect() {
 			socket = io.connect(document.URL);
 			socket.on('chat', function (msg) {
-				console.log(msg);
-				document.getElementById('mainChat').innerHTML += ('<br/>' + msg);
+				$('#mainChat').append(msg + '<br/>');
 			});
-			document.getElementById('nameSelector').style.display='none';
-			document.getElementById('chatView').style.display='';
-			name = document.getElementById('name').value; 
+			$('#nameSelector').toggle('fast');
+			$('#chatView').fadeToggle('slow');
+			name = $('#name').val(); 
+			$('#textInput').focus();
 		}
 	  
 		function sendMessage() {
-			var msg = '<strong>'+ name + ':</strong> ' + document.getElementById('textInput').value;
+			var msg = '<strong>'+ name + ':</strong> ' + $('#textInput').val();
 			socket.emit('chat', msg);
-			document.getElementById('textInput').value = '';
+			$('#textInput').val('');
+			$('#textInput').focus();
 		}
 	</script>
 </body>
-
-
 </html>
