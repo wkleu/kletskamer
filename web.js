@@ -37,7 +37,7 @@ io.sockets.on('connection', function (socket) {
       console.log('user disconnected: ' + socket.user);
       delete users[socket.user];
       console.log(users);
-  	  socket.broadcast.emit('message', {user: 'SERVER', msg: socket.user + ' disconnected'});
+  	  socket.broadcast.emit('message', {user: 'SERVER', text: socket.user + ' disconnected'});
       socket.broadcast.emit('updateUsers', users);
   });
   
