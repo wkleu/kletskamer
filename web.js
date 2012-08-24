@@ -14,17 +14,37 @@ app.listen(port, function() {
   console.log("Listening on " + port);
 });
 
+
+var users = {};
+
 io.sockets.on('connection', function (socket) {
-  socket.broadcast.emit('chat', socket.sessionId + ' connected');
-  
-  socket.on('chat', function (msg) {
-    console.log('chat received: ' + msg);
-	socket.emit('chat', msg);
-	socket.broadcast.emit('chat', msg);
-  });
-  
-  socket.on('disconnect', function () {
-	socket.broadcast.emit('chat', socket.sessionId + ' disconnected');
+
+    socket.on('connect', function(data) {
+      console.log('user connected: ' + data.user);
+      socket.user = data.user;
+      users[socket.user] = socket.user;
+      sendToAll(socket, 'message', {user: 'SERVER', text: socket.user + ' connected'});
+      sendToAll(socket, 'updateUsers', users);
+    });
+
+    // message received from client
+    socket.on('message', function (text) {
+      console.log(socket.user + ': ' + text);
+      sendToAll(socket, 'message', {user: socket.user, text: text});
+    });
+    
+    socket.on('disconnect', function () {
+      console.log('user disconnected: ' + socket.user);
+      delete users[socket.user];
+      console.log(users);
+  	  socket.broadcast.emit('message', {user: 'SERVER', msg: socket.user + ' disconnected'});
+      socket.broadcast.emit('updateUsers', users);
   });
   
 });
+
+// to emit and broadcast
+function sendToAll(socket, command, obj) {
+  socket.emit(command, obj); 
+  socket.broadcast.emit(command, obj);
+}
