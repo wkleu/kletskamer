@@ -3,6 +3,7 @@
 	<head>
 		 <title>Kletskamer</title>
 		 <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.0/css/bootstrap-combined.min.css" rel="stylesheet">
+		 <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/jquery-ui.css" rel="stylesheet">
 		 <style type="text/css">
 			.center {
 				text-align:center;
@@ -33,7 +34,9 @@
 
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.0/js/bootstrap.min.js"></script>
+	
 	<script>
 		var socket;
 		var name;
@@ -47,14 +50,22 @@
 					sendMessage();
 				}		
 			});
-			
 		});
 	  
 		function connect() {
 			socket = io.connect(document.URL);
 			name = $('#name').val();
-
-			socket.emit('connect', { 'user' : name})			
+			
+			var $loadingDialog = $('#loadingDialog')
+					.dialog({
+					modal: true,
+					resizable: false,
+					open: function() { $(".ui-dialog-titlebar-close").hide(); }
+				});	
+				
+			socket.emit('connect', { 'user' : name}, function() {
+				$loadingDialog.dialog('close');
+			});			
 			
 			socket.on('message', function (msg) {
 				if (msg.user == 'SERVER') {
@@ -91,6 +102,12 @@
 				$('#onlineUsers').append(key + ' ');
 			});	
 		}
+		
 	</script>
+	<div id="loadingDialog" style="display: none;" class="center" title="Connecting">
+		<br/>
+		Connecting to server<br/>
+		<img src="loader.gif" alt="Loading"/>
+	</div>
 </body>
 </html>

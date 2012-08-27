@@ -9,6 +9,12 @@ app.get('/',
   response.sendfile(__dirname + '/index.html');
 });
 
+app.get('/loader.gif',
+ function(request, response) {
+  response.sendfile(__dirname + '/loader.gif');
+});
+
+
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
   console.log("Listening on " + port);
@@ -19,12 +25,13 @@ var users = {};
 
 io.sockets.on('connection', function (socket) {
 
-    socket.on('connect', function(data) {
+    socket.on('connect', function(data, callback) {
       console.log('user connected: ' + data.user);
       socket.user = data.user;
       users[socket.user] = socket.user;
       sendToAll(socket, 'message', {user: 'SERVER', text: socket.user + ' connected'});
       sendToAll(socket, 'updateUsers', users);
+	  callback();
     });
 
     // message received from client
