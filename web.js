@@ -31,7 +31,7 @@ io.sockets.on('connection', function (socket) {
       users[socket.user] = socket.user;
       sendToAll(socket, 'message', {user: 'SERVER', text: socket.user + ' connected'});
       sendToAll(socket, 'updateUsers', users);
-	  callback();
+	    callback();
     });
 
     // message received from client
@@ -43,7 +43,6 @@ io.sockets.on('connection', function (socket) {
     socket.on('disconnect', function () {
       console.log('user disconnected: ' + socket.user);
       delete users[socket.user];
-      console.log(users);
   	  socket.broadcast.emit('message', {user: 'SERVER', text: socket.user + ' disconnected'});
       socket.broadcast.emit('updateUsers', users);
   });

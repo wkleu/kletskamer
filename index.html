@@ -58,9 +58,9 @@
 			
 			var $loadingDialog = $('#loadingDialog')
 					.dialog({
-					modal: true,
-					resizable: false,
-					open: function() { $(".ui-dialog-titlebar-close").hide(); }
+						modal: true,
+						resizable: false,
+						open: function() { $(".ui-dialog-titlebar-close").hide(); }
 				});	
 				
 			socket.emit('connect', { 'user' : name}, function() {
